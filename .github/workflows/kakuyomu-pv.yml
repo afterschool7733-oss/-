@@ -3,11 +3,6 @@ name: Kakuyomu PV monitor (experimental)
 # Manual run only, until a browser run is verified and user approves scheduling.
 on:
   workflow_dispatch:
-  # One-time checks can be triggered by committing a dedicated marker file.
-  # This is not a scheduled run.
-  push:
-    paths:
-      - 'tools/kakuyomu-pv-monitor/.run-once-*'
 
 permissions:
   contents: write
