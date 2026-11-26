@@ -1,0 +1,33 @@
+name: Kakuyomu PV monitor (experimental)
+
+# Manual run only, until a browser run is verified and user approves scheduling.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-pv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Playwright
+        run: |
+          python -m pip install -r tools/kakuyomu-pv-monitor/requirements.txt
+          python -m playwright install --with-deps chromium
+      - name: Read visible public PV (no login)
+        run: python tools/kakuyomu-pv-monitor/monitor.py
+      - name: Commit history if changed
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add tools/kakuyomu-pv-monitor/data/pv_history.csv
+          if ! git diff --cached --quiet; then
+            git commit -m 'Record Kakuyomu PV'
+            git push
+          fi
