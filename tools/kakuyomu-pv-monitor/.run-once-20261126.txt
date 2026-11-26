@@ -1,0 +1,1 @@
+Trigger one-time test of public Kakuyomu visible-PV reader on 2026-11-26.
