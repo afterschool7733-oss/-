@@ -47,9 +47,10 @@ def save(pv, source):
     exists = OUT.exists()
     if exists:
         with OUT.open(encoding="utf-8-sig", newline="") as f:
-            if any(row["checked_at_jst"].startswith(today[:10]) for row in csv.DictReader(f)):
-                print("今日のデータは既に記録済みです")
-                return
+            rows = list(csv.DictReader(f))
+        if any(row["checked_at_jst"].startswith(today[:10]) and row["source"] == source for row in rows):
+            print(f"取得成功：{pv}PV。ただし同日の{source}データは既に存在するため追記しません")
+            return
     with OUT.open("a", encoding="utf-8", newline="") as f:
         writer = csv.DictWriter(f, FIELDS)
         if not exists:
@@ -64,4 +65,5 @@ if __name__ == "__main__":
     pv = args.manual_pv if args.manual_pv is not None else asyncio.run(fetch_pv())
     if pv < 0:
         raise ValueError("PVは0以上")
+    print(f"検出したPV：{pv}")
     save(pv, "user_reported" if args.manual_pv is not None else "public_detail_ui")
