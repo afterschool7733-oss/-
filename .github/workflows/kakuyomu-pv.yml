@@ -1,8 +1,10 @@
-name: Kakuyomu PV monitor (experimental)
+name: Kakuyomu PV monitor
 
-# Manual run only, until a browser run is verified and user approves scheduling.
+# One public-page read per day; cron is UTC (00:00 = 09:00 JST).
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 permissions:
   contents: write
